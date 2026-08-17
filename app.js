@@ -22,6 +22,7 @@
     companyGrid: document.getElementById("companyGrid"),
     visibleCount: document.getElementById("visibleCount"),
     companyCount: document.getElementById("companyCount"),
+    sourceCount: document.getElementById("sourceCount"),
     drawerShell: document.getElementById("drawerShell"),
     drawerBackdrop: document.getElementById("drawerBackdrop"),
     drawerContent: document.getElementById("drawerContent")
@@ -54,8 +55,27 @@
     return Math.round(Math.min(158, 70 + Math.sqrt(company.annualScale) * 3.55));
   }
 
-  function plotY(score) {
-    return Math.max(11, Math.min(86, 103 - Number(score || 20)));
+  function deterministicUnit(value) {
+    let hash = 2166136261;
+    for (const character of String(value)) {
+      hash ^= character.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0) / 4294967295;
+  }
+
+  function plotY(company) {
+    const scale = Number(company.annualScale);
+    if (Number.isFinite(scale) && scale >= 100) {
+      const normalized = Math.min(1, Math.log10(scale / 100 + 1) / Math.log10(8));
+      return 26 - normalized * 14;
+    }
+    if (Number.isFinite(scale) && scale >= 10) {
+      const normalized = Math.min(1, Math.log10(scale / 10) / Math.log10(10));
+      return 57 - normalized * 15;
+    }
+    if (Number.isFinite(scale) && scale > 0) return 69 - Math.min(1, scale / 10) * 6;
+    return 76 + deterministicUnit(company.id) * 10;
   }
 
   function normalizedSearchText(company) {
@@ -67,7 +87,10 @@
       company.pain,
       company.solution,
       company.buyers,
-      company.customers
+      company.customers,
+      company.valuation,
+      company.investors,
+      company.funding
     ].join(" ").toLowerCase();
   }
 
@@ -77,7 +100,7 @@
       .filter((company) => state.category === "all" || company.category === state.category)
       .filter((company) => !state.disclosedOnly || (company.annualScale && ["disclosed", "dated"].includes(company.confidence)))
       .filter((company) => !query || normalizedSearchText(company).includes(query))
-      .sort((a, b) => b.evidenceScore - a.evidenceScore);
+      .sort((a, b) => (Number(b.annualScale) || -1) - (Number(a.annualScale) || -1) || a.company.localeCompare(b.company));
   }
 
   function renderFilters() {
@@ -102,7 +125,7 @@
           type="button"
           data-company="${escapeHtml(company.id)}"
           data-confidence="${escapeHtml(company.confidence)}"
-          style="--x:${company.x}%;--y:${plotY(company.evidenceScore)}%;--size:${size}px;--bubble:${color}"
+          style="--x:${company.x}%;--y:${plotY(company)}%;--size:${size}px;--bubble:${color}"
           aria-label="Open ${escapeHtml(company.company)} details. ${escapeHtml(company.metricValue)}."
         >
           <span class="point-inner">
@@ -115,29 +138,106 @@
     els.radarEmpty.hidden = list.length > 0;
   }
 
+  const sourcePatterns = {
+    company: [/\bproduct\b/i, /\bcompany\b/i, /\bplatform\b/i, /\babout\b/i, /data asset/i, /customers?/i],
+    financial: [/arr/i, /revenue/i, /run-rate/i, /prospectus/i, /acquisition price/i, /tracked scale/i],
+    valuation: [/valuation/i, /acquisition price/i, /secondary/i, /sec filing/i, /series [a-z]/i],
+    customers: [/customer/i, /case/i, /clients/i, /company/i, /product/i],
+    investors: [/investor/i, /funding/i, /series [a-z]/i, /capital/i, /valuation/i]
+  };
+
+  function sourceFor(company, purpose) {
+    const sources = company.sources || [];
+    for (const pattern of sourcePatterns[purpose] || []) {
+      const source = sources.find((candidate) => pattern.test(candidate.label));
+      if (source) return source;
+    }
+    return sources[0] || null;
+  }
+
+  function sourceAnchor(text, source, className = "") {
+    const safeText = escapeHtml(text);
+    if (!source || !source.url) return `<span class="${escapeHtml(className)}">${safeText}</span>`;
+    return `<a class="${escapeHtml(className)}" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${safeText}<span class="external-mark" aria-hidden="true">↗</span></a>`;
+  }
+
+  function valuationInMillions(value) {
+    const match = String(value || "").match(/\$([\d.]+)\s*([BM])/i);
+    if (!match) return null;
+    return Number(match[1]) * (match[2].toUpperCase() === "B" ? 1000 : 1);
+  }
+
+  function headlineMultiple(company) {
+    const valuation = valuationInMillions(company.valuation);
+    const scale = Number(company.annualScale);
+    if (!valuation || !Number.isFinite(scale) || scale <= 0 || company.confidence === "proxy") return "";
+    const multiple = valuation / scale;
+    const formatted = multiple >= 10 ? Math.round(multiple) : multiple.toFixed(1);
+    const basis = /arr/i.test(company.metricLabel) ? "ARR" : /run-rate/i.test(company.metricLabel) ? "run-rate" : "annual scale";
+    return `≈${formatted}× cited ${basis}`;
+  }
+
+  function capitalLabel(company) {
+    if (/^public/i.test(company.status)) return "Public ownership / prior sponsors";
+    if (/^acquired/i.test(company.status)) return "Owner / prior capital";
+    return "Named investors";
+  }
+
   function renderCards(list) {
     els.companyGrid.innerHTML = list.map((company) => {
       const color = colors[company.category] || "#d7ff68";
       const confidence = confidenceLabels[company.confidence] || company.confidence;
+      const companySource = sourceFor(company, "company");
+      const financialSource = sourceFor(company, "financial");
+      const valuationSource = /not publicly disclosed/i.test(company.valuation) ? null : sourceFor(company, "valuation");
+      const customerSource = sourceFor(company, "customers");
+      const investorSource = sourceFor(company, "investors");
+      const multiple = headlineMultiple(company);
       return `
-        <button class="company-card" type="button" data-company="${escapeHtml(company.id)}" style="--category:${color}">
-          <span class="card-top">
-            <span class="company-monogram" aria-hidden="true">${escapeHtml(companyInitials(company.company))}</span>
-            <span class="card-category">${escapeHtml(categoryNames[company.category])}<br>${escapeHtml(company.subCategory)}</span>
-          </span>
-          <span>
-            <h3>${escapeHtml(company.company)}</h3>
-            <span class="one-liner">${escapeHtml(company.oneLiner)}</span>
-          </span>
-          <span class="card-metric">
-            <span class="metric-label">${escapeHtml(company.metricLabel)}</span>
-            <span class="metric-value">${escapeHtml(company.metricValue)}</span>
-            <span class="metric-foot">
+        <article class="company-card" style="--category:${color}">
+          <button class="card-open" type="button" data-company="${escapeHtml(company.id)}" aria-label="Open ${escapeHtml(company.company)} research dossier">
+            <span class="sr-only">Open ${escapeHtml(company.company)} research dossier</span>
+          </button>
+          <div class="card-content">
+            <div class="card-top">
+              <span class="company-monogram" aria-hidden="true">${escapeHtml(companyInitials(company.company))}</span>
+              <span class="card-category">${escapeHtml(categoryNames[company.category])}<br>${escapeHtml(company.subCategory)}</span>
+            </div>
+            <div class="card-intro">
+              <h3>${sourceAnchor(company.company, companySource, "company-source")}</h3>
+              <p class="one-liner">${escapeHtml(company.oneLiner)}</p>
+            </div>
+            <dl class="card-facts">
+              <div class="card-fact financial-fact">
+                <dt>${escapeHtml(company.metricLabel)}</dt>
+                <dd>${sourceAnchor(company.metricValue, financialSource, "metric-source")}</dd>
+                <small>${escapeHtml(confidence)}</small>
+              </div>
+              <div class="card-fact valuation-fact">
+                <dt>Latest public valuation</dt>
+                <dd>${sourceAnchor(company.valuation, valuationSource, "fact-source")}</dd>
+                ${multiple ? `<small title="Latest cited valuation divided by the card's annual-scale field; dates and revenue quality may differ.">${escapeHtml(multiple)} · rough, unnormalized</small>` : ""}
+              </div>
+              <div class="card-fact wide-fact">
+                <dt>Who pays</dt>
+                <dd>${sourceAnchor(company.buyers, companySource, "fact-source clamp-two")}</dd>
+              </div>
+              <div class="card-fact wide-fact">
+                <dt>Named customer proof</dt>
+                <dd>${sourceAnchor(company.customers, customerSource, "fact-source clamp-two")}</dd>
+                <small>Largest customer identity is not public in the reviewed sources; concentration is shown where available.</small>
+              </div>
+              <div class="card-fact wide-fact investor-fact">
+                <dt>${escapeHtml(capitalLabel(company))}</dt>
+                <dd>${sourceAnchor(company.investors, investorSource, "fact-source clamp-two")}</dd>
+              </div>
+            </dl>
+            <div class="metric-foot">
               <span>${escapeHtml(company.status)}</span>
-              <span class="evidence-chip">${escapeHtml(confidence)}</span>
-            </span>
-          </span>
-        </button>
+              <span class="open-dossier">Open dossier →</span>
+            </div>
+          </div>
+        </article>
       `;
     }).join("");
   }
@@ -149,6 +249,7 @@
     renderCards(list);
     els.visibleCount.textContent = String(list.length);
     els.companyCount.textContent = String(companies.length);
+    els.sourceCount.textContent = String(companies.reduce((total, company) => total + (company.sources || []).length, 0));
   }
 
   function sourceLinks(company) {
@@ -167,6 +268,12 @@
     state.lastTrigger = trigger || document.activeElement;
     const color = colors[company.category] || "#d7ff68";
     const confidence = confidenceLabels[company.confidence] || company.confidence;
+    const companySource = sourceFor(company, "company");
+    const financialSource = sourceFor(company, "financial");
+    const valuationSource = /not publicly disclosed/i.test(company.valuation) ? null : sourceFor(company, "valuation");
+    const customerSource = sourceFor(company, "customers");
+    const investorSource = sourceFor(company, "investors");
+    const multiple = headlineMultiple(company);
 
     els.drawerContent.innerHTML = `
       <div class="drawer-head">
@@ -175,21 +282,21 @@
       </div>
       <div class="drawer-body" style="--category:${color}">
         <div class="drawer-title-row">
-          <h2 id="drawerTitle">${escapeHtml(company.company)}</h2>
+          <h2 id="drawerTitle">${sourceAnchor(company.company, companySource, "drawer-company-link")}</h2>
           <span class="drawer-category">${escapeHtml(categoryNames[company.category])}</span>
         </div>
         <p class="drawer-summary">${escapeHtml(company.oneLiner)}</p>
         <div class="drawer-financial">
           <span class="metric-label">${escapeHtml(company.metricLabel)}</span>
-          <span class="metric-value">${escapeHtml(company.metricValue)}</span>
+          <span class="metric-value">${sourceAnchor(company.metricValue, financialSource, "drawer-metric-link")}</span>
           <p>${escapeHtml(company.metricNote)}</p>
         </div>
         <div class="detail-grid">
           ${detailBlock("Customer pain", `<p>${escapeHtml(company.pain)}</p>`)}
           ${detailBlock("Core solution", `<p>${escapeHtml(company.solution)}</p>`)}
-          ${detailBlock("Buyer", `<p>${escapeHtml(company.buyers)}</p><p><strong>Customer proof:</strong> ${escapeHtml(company.customers)}</p>`)}
+          ${detailBlock("Who pays", `<p>${sourceAnchor(company.buyers, companySource, "detail-source-link")}</p><p><strong>Named customer proof:</strong> ${sourceAnchor(company.customers, customerSource, "detail-source-link")}</p><p class="disclosure-note">Largest customer identity is not public in the reviewed sources; concentration is shown where available.</p>`)}
           ${detailBlock("Business model", `<p>${escapeHtml(company.monetization)}</p>`)}
-          ${detailBlock("Capital", `<p><strong>Funding:</strong> ${escapeHtml(company.funding)}</p><p><strong>Latest public valuation:</strong> ${escapeHtml(company.valuation)}</p><p><strong>Investors:</strong> ${escapeHtml(company.investors)}</p>`, "wide")}
+          ${detailBlock("Capital and valuation", `<p><strong>Funding:</strong> ${sourceAnchor(company.funding, investorSource, "detail-source-link")}</p><p><strong>Latest public valuation:</strong> ${sourceAnchor(company.valuation, valuationSource, "detail-source-link")}</p>${multiple ? `<p><strong>Headline multiple:</strong> ${escapeHtml(multiple)} <span class="disclosure-note">(rough and unnormalized)</span></p>` : ""}<p><strong>${escapeHtml(capitalLabel(company))}:</strong> ${sourceAnchor(company.investors, investorSource, "detail-source-link")}</p>`, "wide")}
           ${detailBlock("What is commercially proved", `<p>${escapeHtml(company.proof)}</p>`)}
           ${detailBlock("Independent-data opportunity", `<p>${escapeHtml(company.angle)}</p>`)}
           ${detailBlock("What remains hard", `<p>${escapeHtml(company.watchout)}</p>`, "wide")}

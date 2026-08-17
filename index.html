@@ -35,7 +35,7 @@
           <dl class="hero-stats" aria-label="Radar coverage">
             <div><dt id="companyCount">22</dt><dd>companies</dd></div>
             <div><dt>4</dt><dd>commercial jobs</dd></div>
-            <div><dt>5</dt><dd>evidence labels</dd></div>
+            <div><dt id="sourceCount">—</dt><dd>source links</dd></div>
           </dl>
         </div>
       </section>
@@ -55,7 +55,7 @@
             <p class="eyebrow">INTERACTIVE LANDSCAPE</p>
             <h2 id="radar-title">Where each product changes the decision</h2>
           </div>
-          <p class="section-note">Vertical position reflects the strength of public commercial evidence, not product quality.</p>
+          <p class="section-note">Vertical position uses annual-scale bands: $100M+, $10–99M and below $10M / undisclosed. It is not a quality ranking.</p>
         </div>
 
         <div class="toolbar" role="group" aria-label="Filter companies">
@@ -69,12 +69,12 @@
         </div>
 
         <div class="radar-wrap">
-          <div class="radar-y-label" aria-hidden="true"><span>STRONGER PUBLIC EVIDENCE</span></div>
+          <div class="radar-y-label" aria-hidden="true"><span>ANNUAL COMMERCIAL SCALE</span></div>
           <div class="radar-chart" id="radarChart" aria-label="Interactive company radar">
             <div class="radar-grid" aria-hidden="true">
-              <div class="radar-band band-high"><span>Scaled</span></div>
-              <div class="radar-band band-mid"><span>Growing</span></div>
-              <div class="radar-band band-low"><span>Early / undisclosed</span></div>
+              <div class="radar-band band-high"><span>$100M+ annual scale</span></div>
+              <div class="radar-band band-mid"><span>$10–99M annual scale</span></div>
+              <div class="radar-band band-low"><span>Below $10M / undisclosed / transaction-only</span></div>
               <div class="axis-column"><span>Targeting</span><small>Find the right customer</small></div>
               <div class="axis-column"><span>Optimization</span><small>Set value and allocate</small></div>
               <div class="axis-column"><span>Measurement</span><small>Verify incrementality</small></div>
@@ -115,25 +115,41 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">COMPANY CARDS</p>
-            <h2 id="catalog-title">Evidence before inference</h2>
+            <h2 id="catalog-title">Who pays, who backs it, what it is worth</h2>
           </div>
-          <p class="section-note"><span id="visibleCount">22</span> companies shown. Every financial label preserves the source's original metric.</p>
+          <p class="section-note"><span id="visibleCount">22</span> companies shown. Click a company, financial figure, customer or investor to open its supporting source.</p>
         </div>
         <div class="company-grid" id="companyGrid"></div>
       </section>
 
-      <section class="method-section">
+      <section class="method-section" aria-labelledby="method-title">
         <div class="shell method-grid">
-          <div>
-            <p class="eyebrow">READING THE NUMBERS</p>
-            <h2>ARR, revenue and media spend are not interchangeable.</h2>
+          <div class="method-lead">
+            <p class="eyebrow">VALUATION DISCIPLINE</p>
+            <h2 id="method-title">Value the priced event—not the funding headline.</h2>
+            <p>Every card preserves the source's original metric and links directly to the underlying evidence.</p>
           </div>
           <div class="method-copy">
-            <p><strong>Annual recurring revenue</strong> appears only when a company or named source explicitly uses ARR.</p>
-            <p><strong>Annual revenue / run-rate</strong> may include media margin, transaction revenue or services. It is shown with its original label.</p>
-            <p><strong>Valuation</strong> means the latest public financing or secondary transaction found, with the date attached. “Undisclosed” is preferable to false precision.</p>
-            <p><strong>Public evidence score</strong> combines disclosed financial scale, customer proof and recency. It is a research aid, not an investment rating.</p>
+            <article>
+              <strong>01 / Start with a priced event</strong>
+              <p>Use an explicitly disclosed post-money valuation, secondary transaction, acquisition price or public market value. A round size alone is not a valuation.</p>
+            </article>
+            <article>
+              <strong>02 / Build only a rough multiple</strong>
+              <p>Divide valuation by same-period ARR or revenue only when both are available. Keep ARR, ad-spend revenue, run-rate and exit proceeds visibly separate.</p>
+            </article>
+            <article>
+              <strong>03 / Follow the payer</strong>
+              <p>Named customers prove adoption, not concentration. Unless a filing identifies the largest account, the cards say that concentration is undisclosed.</p>
+            </article>
           </div>
+          <nav class="reference-strip" aria-label="Research references">
+            <span>REFERENCE ORDER</span>
+            <a href="https://www.sec.gov/edgar/search/" target="_blank" rel="noopener noreferrer">SEC filings ↗</a>
+            <a href="#catalog-title">Company-level source links ↓</a>
+            <a href="https://www.fca.org.uk/publications/multi-firm-reviews/private-market-valuation-practices" target="_blank" rel="noopener noreferrer">FCA private-market valuation practices ↗</a>
+            <a href="https://www.bvp.com/atlas/the-cloud-100-benchmarks-report" target="_blank" rel="noopener noreferrer">Bessemer Cloud 100 benchmarks ↗</a>
+          </nav>
         </div>
       </section>
     </main>
