@@ -64,18 +64,42 @@
     return (hash >>> 0) / 4294967295;
   }
 
+  const stageYOverrides = {
+    liftoff: 13,
+    hightouch: 36,
+    moloco: 34,
+    rokt: 31,
+    commerceiq: 46,
+    vibe: 43,
+    stackline: 29,
+    measured: 39,
+    appsflyer: 28,
+    rockerbox: 47,
+    tatari: 46,
+    attain: 58,
+    voyantis: 61,
+    fermat: 57,
+    "triple-whale": 68,
+    northbeam: 56,
+    alembic: 68,
+    haus: 59,
+    "black-crow": 84,
+    proxima: 84,
+    replo: 84,
+    rebuy: 84
+  };
+
   function plotY(company) {
-    const scale = Number(company.annualScale);
-    if (Number.isFinite(scale) && scale >= 100) {
-      const normalized = Math.min(1, Math.log10(scale / 100 + 1) / Math.log10(8));
-      return 26 - normalized * 14;
-    }
-    if (Number.isFinite(scale) && scale >= 10) {
-      const normalized = Math.min(1, Math.log10(scale / 10) / Math.log10(10));
-      return 57 - normalized * 15;
-    }
-    if (Number.isFinite(scale) && scale > 0) return 69 - Math.min(1, scale / 10) * 6;
-    return 76 + deterministicUnit(company.id) * 10;
+    if (Number.isFinite(stageYOverrides[company.id])) return stageYOverrides[company.id];
+    const bandCenters = {
+      public: 13,
+      late: 36,
+      mid: 58,
+      early: 80
+    };
+    const center = bandCenters[company.maturity] ?? bandCenters.mid;
+    const jitter = (deterministicUnit(company.id) - 0.5) * 7;
+    return center + jitter;
   }
 
   function normalizedSearchText(company) {
@@ -125,8 +149,9 @@
           type="button"
           data-company="${escapeHtml(company.id)}"
           data-confidence="${escapeHtml(company.confidence)}"
+          data-maturity="${escapeHtml(company.maturity)}"
           style="--x:${company.x}%;--y:${plotY(company)}%;--size:${size}px;--bubble:${color}"
-          aria-label="Open ${escapeHtml(company.company)} details. ${escapeHtml(company.metricValue)}."
+          aria-label="Open ${escapeHtml(company.company)} details. ${escapeHtml(company.status)}. ${escapeHtml(company.metricValue)}."
         >
           <span class="point-inner">
             <span class="point-name">${escapeHtml(company.company)}</span>

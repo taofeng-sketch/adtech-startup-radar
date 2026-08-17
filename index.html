@@ -55,7 +55,7 @@
             <p class="eyebrow">INTERACTIVE LANDSCAPE</p>
             <h2 id="radar-title">Where each product changes the decision</h2>
           </div>
-          <p class="section-note">Vertical position uses annual-scale bands: $100M+, $10–99M and below $10M / undisclosed. It is not a quality ranking.</p>
+          <p class="section-note">Horizontal position follows the marketing funnel. Vertical position shows company maturity. Bubble size shows disclosed ARR or comparable annual revenue scale.</p>
         </div>
 
         <div class="toolbar" role="group" aria-label="Filter companies">
@@ -69,15 +69,16 @@
         </div>
 
         <div class="radar-wrap">
-          <div class="radar-y-label" aria-hidden="true"><span>ANNUAL COMMERCIAL SCALE</span></div>
-          <div class="radar-chart" id="radarChart" aria-label="Interactive company radar">
+          <div class="radar-y-label" aria-hidden="true"><span>COMPANY STAGE</span></div>
+          <div class="radar-chart" id="radarChart" aria-label="Interactive company radar by marketing job and company stage">
             <div class="radar-grid" aria-hidden="true">
-              <div class="radar-band band-high"><span>$100M+ annual scale</span></div>
-              <div class="radar-band band-mid"><span>$10–99M annual scale</span></div>
-              <div class="radar-band band-low"><span>Below $10M / undisclosed / transaction-only</span></div>
-              <div class="axis-column"><span>Targeting</span><small>Find the right customer</small></div>
-              <div class="axis-column"><span>Optimization</span><small>Set value and allocate</small></div>
-              <div class="axis-column"><span>Measurement</span><small>Verify incrementality</small></div>
+              <div class="radar-band band-public"><span>Public</span></div>
+              <div class="radar-band band-late"><span>Late stage · Series C+ / mature private</span></div>
+              <div class="radar-band band-mid"><span>Mid stage · Series B / growth</span></div>
+              <div class="radar-band band-early"><span>Early stage · Seed / Series A</span></div>
+              <div class="axis-column axis-targeting"><span>Targeting</span><small>Find the right customer</small></div>
+              <div class="axis-column axis-optimization"><span>Optimization</span><small>Set value and allocate</small></div>
+              <div class="axis-column axis-measurement"><span>Measurement</span><small>Verify incrementality</small></div>
             </div>
             <div class="radar-points" id="radarPoints"></div>
             <p class="empty-state" id="radarEmpty" hidden>No companies match this filter.</p>
@@ -90,7 +91,7 @@
           <span><i class="dot estimate"></i> Secondary estimate</span>
           <span><i class="dot proxy"></i> Transaction proxy</span>
           <span><i class="dot unknown"></i> Not disclosed</span>
-          <span class="legend-note">Bubble size uses the latest comparable annual revenue metric where one is public.</span>
+          <span class="legend-note">Position uses financing or ownership stage; bubble size uses the latest comparable annual revenue metric where one is public.</span>
         </div>
       </section>
 
