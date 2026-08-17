@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="description" content="A sourced, interactive scan of adtech startups across targeting, optimization, measurement and commerce." />
+    <meta name="theme-color" content="#f4f0e8" />
+    <title>Adtech Startup Radar</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#radar">Skip to radar</a>
+
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="Adtech Startup Radar home">
+        <span class="wordmark-mark">AR</span>
+        <span>Adtech Startup Radar</span>
+      </a>
+      <div class="header-meta">
+        <span>Public-source scan</span>
+        <span>17 Aug 2026</span>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero shell" aria-labelledby="hero-title">
+        <p class="eyebrow">WHERE CUSTOMERS ALREADY PAY</p>
+        <h1 id="hero-title">The adtech market has proved demand beyond measurement.</h1>
+        <div class="hero-bottom">
+          <p class="hero-copy">
+            An interactive scan of companies acting before, during and after media spend. Tap any company to see the buyer,
+            pain point, solution, investors and the strongest public evidence of commercial scale.
+          </p>
+          <dl class="hero-stats" aria-label="Radar coverage">
+            <div><dt id="companyCount">22</dt><dd>companies</dd></div>
+            <div><dt>4</dt><dd>commercial jobs</dd></div>
+            <div><dt>5</dt><dd>evidence labels</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="thesis-strip" aria-label="Core market pattern">
+        <div class="shell thesis-grid">
+          <p><span>01</span> Targeting products improve who receives the bid.</p>
+          <p><span>02</span> Optimization products improve the value signal or allocation.</p>
+          <p><span>03</span> Measurement products prove what worked after the spend.</p>
+          <p><span>04</span> Commerce products turn the click into a tailored path to purchase.</p>
+        </div>
+      </section>
+
+      <section class="radar-section shell" id="radar" aria-labelledby="radar-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">INTERACTIVE LANDSCAPE</p>
+            <h2 id="radar-title">Where each product changes the decision</h2>
+          </div>
+          <p class="section-note">Vertical position reflects the strength of public commercial evidence, not product quality.</p>
+        </div>
+
+        <div class="toolbar" role="group" aria-label="Filter companies">
+          <div class="filter-pills" id="categoryFilters" aria-label="Filter by category"></div>
+          <label class="search-control">
+            <span class="sr-only">Search companies, buyers or problems</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" /></svg>
+            <input id="searchInput" type="search" placeholder="Search company, buyer or problem" autocomplete="off" />
+          </label>
+          <label class="check-control"><input id="disclosedOnly" type="checkbox" /><span>Annual scale disclosed</span></label>
+        </div>
+
+        <div class="radar-wrap">
+          <div class="radar-y-label" aria-hidden="true"><span>STRONGER PUBLIC EVIDENCE</span></div>
+          <div class="radar-chart" id="radarChart" aria-label="Interactive company radar">
+            <div class="radar-grid" aria-hidden="true">
+              <div class="radar-band band-high"><span>Scaled</span></div>
+              <div class="radar-band band-mid"><span>Growing</span></div>
+              <div class="radar-band band-low"><span>Early / undisclosed</span></div>
+              <div class="axis-column"><span>Targeting</span><small>Find the right customer</small></div>
+              <div class="axis-column"><span>Optimization</span><small>Set value and allocate</small></div>
+              <div class="axis-column"><span>Measurement</span><small>Verify incrementality</small></div>
+            </div>
+            <div class="radar-points" id="radarPoints"></div>
+            <p class="empty-state" id="radarEmpty" hidden>No companies match this filter.</p>
+          </div>
+        </div>
+
+        <div class="legend" aria-label="Financial evidence legend">
+          <span><i class="dot disclosed"></i> Company disclosed</span>
+          <span><i class="dot dated"></i> Public but dated</span>
+          <span><i class="dot estimate"></i> Secondary estimate</span>
+          <span><i class="dot proxy"></i> Transaction proxy</span>
+          <span><i class="dot unknown"></i> Not disclosed</span>
+          <span class="legend-note">Bubble size uses the latest comparable annual revenue metric where one is public.</span>
+        </div>
+      </section>
+
+      <section class="patterns-section">
+        <div class="shell">
+          <div class="section-heading light-heading">
+            <div>
+              <p class="eyebrow">WHAT THE MARKET APPEARS TO PROVE</p>
+              <h2>Four monetizable jobs sit around the same data foundation.</h2>
+            </div>
+          </div>
+          <div class="pattern-grid">
+            <article><span>01 / TARGET</span><h3>Make external audiences more valuable</h3><p>Purchase, identity and behavioural data calibrate who the platform should find. The buyer pays when this lowers CAC or improves predicted LTV.</p><strong>Examples: Hightouch, Attain, Proxima</strong></article>
+            <article><span>02 / OPTIMIZE</span><h3>Change the value passed into the bidder</h3><p>First-party outcomes and predicted value steer acquisition, budget and retail-media decisions without rebuilding the platform auction.</p><strong>Examples: Voyantis, Moloco, CommerceIQ</strong></article>
+            <article><span>03 / VERIFY</span><h3>Replace attribution with causal confidence</h3><p>Incrementality, MMM and cross-channel evidence still command enterprise spend, but the workflow acts after most product and audience choices are made.</p><strong>Examples: AppsFlyer, Haus, Measured</strong></article>
+            <article><span>04 / CONVERT</span><h3>Own the experience after the click</h3><p>Personalized storefronts and post-purchase offers monetize directly through higher conversion, subscription fees or a share of commerce value.</p><strong>Examples: Rokt, FERMÀT, Replo</strong></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="catalog-section shell" aria-labelledby="catalog-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">COMPANY CARDS</p>
+            <h2 id="catalog-title">Evidence before inference</h2>
+          </div>
+          <p class="section-note"><span id="visibleCount">22</span> companies shown. Every financial label preserves the source's original metric.</p>
+        </div>
+        <div class="company-grid" id="companyGrid"></div>
+      </section>
+
+      <section class="method-section">
+        <div class="shell method-grid">
+          <div>
+            <p class="eyebrow">READING THE NUMBERS</p>
+            <h2>ARR, revenue and media spend are not interchangeable.</h2>
+          </div>
+          <div class="method-copy">
+            <p><strong>Annual recurring revenue</strong> appears only when a company or named source explicitly uses ARR.</p>
+            <p><strong>Annual revenue / run-rate</strong> may include media margin, transaction revenue or services. It is shown with its original label.</p>
+            <p><strong>Valuation</strong> means the latest public financing or secondary transaction found, with the date attached. “Undisclosed” is preferable to false precision.</p>
+            <p><strong>Public evidence score</strong> combines disclosed financial scale, customer proof and recency. It is a research aid, not an investment rating.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <p>Curated public-source snapshot. Not exhaustive and not investment advice.</p>
+        <p>Financials checked 17 Aug 2026 · Source links open in a new tab.</p>
+      </div>
+    </footer>
+
+    <div class="drawer-shell" id="drawerShell" hidden>
+      <button class="drawer-backdrop" id="drawerBackdrop" aria-label="Close company details"></button>
+      <aside class="drawer" id="companyDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+        <div id="drawerContent"></div>
+      </aside>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
